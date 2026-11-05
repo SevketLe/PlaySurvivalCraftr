@@ -1,4 +1,0 @@
-Bu klasore sunlari koy:
-- sevkefunk.mp4
-- videomobil.mp4
-- videopc.mp4
