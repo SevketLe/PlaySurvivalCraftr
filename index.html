@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SoftSMP – Minecraft Sunucusu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root{--g:#6cf06c;--g2:#2e9e3a;--t:#f0faf0;--m:#a9c7ad;--edge:rgba(255,255,255,.2)}
+*{box-sizing:border-box;margin:0}
+html{background:#0c1710}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--t);line-height:1.6;min-height:100vh;background:linear-gradient(160deg,#143222 0,#0c1710 45%,#0f2a2e 100%)}
+.px{font-family:"Press Start 2P",monospace,sans-serif;line-height:1.5}
+button{font:inherit;cursor:pointer;border:0;color:inherit;background:none}
+/* Aero görünümü: blur yok, sadece hafif degrade + parlak kenar (çok hafif) */
+.glass{background:linear-gradient(180deg,rgba(255,255,255,.13),rgba(255,255,255,.04) 50%,rgba(255,255,255,.06)),rgba(18,38,26,.88);border:1px solid var(--edge);box-shadow:0 4px 14px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.3)}
+nav{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;padding:10px 5%;border-radius:0 0 16px 16px;border-top:0}
+nav b{color:var(--g);font-size:13px}
+.btn{background:linear-gradient(180deg,#5fdc6c,#23912f 55%,#1f8029);color:#fff;padding:10px 18px;border-radius:12px;font-weight:800;border:1px solid #ffffff55;box-shadow:inset 0 1px 0 #ffffff88;transition:transform .15s,filter .15s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.1)}
+.btn:active{transform:translateY(1px)}
+.btn.ghost{background:linear-gradient(180deg,#ffffff30,#ffffff10)}
+.hero{text-align:center;padding:70px 5% 40px}
+.hero h1{font-size:clamp(20px,5vw,40px);color:var(--g);text-shadow:3px 3px #0a120c;margin-bottom:18px}
+.hero p{max-width:560px;margin:0 auto 22px;color:var(--m);font-size:18px}
+.ver{display:inline-block;padding:5px 16px;border-radius:20px;margin-bottom:16px;font-weight:700;color:var(--g)}
+.ip{display:inline-flex;align-items:center;gap:14px;border-radius:16px;padding:12px 14px 12px 22px;flex-wrap:wrap;justify-content:center}
+.ip code{font-size:clamp(15px,3.5vw,22px);font-weight:800;color:#fff}
+section{padding:44px 5%;max-width:1000px;margin:auto;content-visibility:auto;contain-intrinsic-size:auto 500px}
+h2{text-align:center;font-size:clamp(14px,3vw,20px);color:var(--g);margin-bottom:10px}
+.sub{text-align:center;color:var(--m);margin-bottom:26px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;align-items:start}
+.card{border-radius:18px;padding:18px;transition:transform .2s,border-color .2s}
+.card:hover{transform:translateY(-3px);border-color:#6cf06c99}
+.vid{width:100%;text-align:left}
+.thumb{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:16/9;background:#000a;margin-bottom:12px;border:1px solid var(--edge)}
+.thumb.p{aspect-ratio:9/16;max-width:200px;margin:0 auto 12px}
+.thumb video{width:100%;height:100%;object-fit:cover;display:block}
+.play{position:absolute;inset:0;margin:auto;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-size:20px;background:rgba(0,0,0,.5);border:1px solid #fff8;transition:background .2s}
+.vid:hover .play{background:#2e9e3acc}
+.vid small{color:var(--m);display:block}
+/* Pencereler: sadece transform + opacity (GPU) */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;z-index:50;padding:12px;opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s}
+.modal.on{opacity:1;visibility:visible}
+.win{border-radius:14px;overflow:hidden;max-width:860px;width:100%;max-height:94vh;display:flex;flex-direction:column;transform:scale(.94) translateY(10px);opacity:0;transition:transform .22s ease-out,opacity .2s}
+.win.portrait{max-width:420px}
+.on>.win,.win.on{transform:none;opacity:1}
+.bar{display:flex;justify-content:space-between;align-items:center;padding:8px 8px 8px 16px;background:linear-gradient(180deg,rgba(255,255,255,.26),rgba(255,255,255,.06));border-bottom:1px solid var(--edge)}
+.bar h3{font-size:11px;color:#fff}
+.x{width:44px;height:26px;border-radius:0 0 8px 8px;background:linear-gradient(#e86a5c,#b52a1c);color:#fff;font-weight:800;border:1px solid #ffffff66;border-top:0;margin-top:-8px;align-self:flex-start}
+.x:hover{filter:brightness(1.2)}
+.body{padding:14px;overflow:auto}
+.body video{width:100%;border-radius:10px;background:#000;max-height:56vh;display:block;margin:auto}
+.portrait .body video{width:auto;max-width:100%;max-height:62vh;aspect-ratio:9/16}
+.body p,.body ol{color:var(--m);margin-top:12px}
+.body ol{padding-left:22px}
+.fnd b{font-size:22px}
+footer{text-align:center;padding:28px;color:var(--m);font-size:14px}
+#music{position:fixed;right:12px;bottom:12px;z-index:30;border-radius:16px;padding:6px 12px;display:flex;gap:8px;align-items:center}
+#music button{font-size:20px}
+#music input{width:76px;accent-color:var(--g)}
+#mwin{position:fixed;right:12px;bottom:68px;z-index:30;width:min(320px,calc(100vw - 24px));transform-origin:bottom right;visibility:hidden;pointer-events:none}
+#mwin.on{visibility:visible;pointer-events:auto}
+#mwin .body{padding:8px}
+#mwin video{max-height:none}
+#toast{position:fixed;left:50%;bottom:76px;transform:translate(-50%,20px);padding:10px 22px;border-radius:30px;font-weight:800;opacity:0;transition:transform .25s,opacity .25s;z-index:60;pointer-events:none}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<nav class="glass"><b class="px">⛏ SOFTSMP</b><button class="btn ghost" id="kb">Kurucular</button></nav>
+
+<header class="hero">
+  <h1 class="px">SoftSMP'ye Katıl!</h1>
+  <p>Arkadaşlarınla birlikte hayatta kal, inşa et, keşfet. Sunucumuz herkese açık, hemen gel!</p>
+  <div class="ver glass">Java Edition • Sürüm <b>1.21.8</b></div><br>
+  <div class="ip glass"><span>🌍</span><code>softsmp10.aternos.me</code><button class="btn" id="cp">IP'yi Kopyala</button></div>
+</header>
+
+<section id="vc">
+  <h2 class="px">VC Nasıl Kurulur?</h2>
+  <p class="sub">Sunucuda sesli konuşmak için videoları izle, adım adım öğren 👇</p>
+  <div class="grid">
+    <div class="card glass"><button class="vid" data-v="assets/videomobil.mp4" data-t="📱 Mobil'de VC Kurulumu" data-p="1">
+      <div class="thumb p"><video data-src="assets/videomobil.mp4#t=0.5" preload="none" muted playsinline></video><span class="play">▶</span></div>
+      <h3>📱 Mobil</h3><small>Telefondan oynayanlar için</small></button></div>
+    <div class="card glass"><button class="vid" data-v="assets/videopc.mp4" data-t="💻 PC'de VC Kurulumu">
+      <div class="thumb"><video data-src="assets/videopc.mp4#t=0.5" preload="none" muted playsinline></video><span class="play">▶</span></div>
+      <h3>💻 PC</h3><small>Bilgisayardan oynayanlar için</small></button></div>
+  </div>
+</section>
+
+<section>
+  <h2 class="px">Nasıl Girerim?</h2>
+  <p class="sub">Sadece 3 adım</p>
+  <div class="grid">
+    <div class="card glass"><h3>1. IP'yi kopyala</h3><p>Yukarıdaki butona basarak <b>softsmp10.aternos.me</b> adresini kopyala.</p></div>
+    <div class="card glass"><h3>2. Minecraft'ı aç</h3><p>Sürüm <b>1.21.8</b> ile Çok Oyunculu → Sunucu Ekle kısmına IP'yi yapıştır.</p></div>
+    <div class="card glass"><h3>3. Bağlan!</h3><p>Sunucu kapalıysa biraz bekle, açılınca gir ve eğlen.</p></div>
+  </div>
+</section>
+
+<footer>Made with ❤ for the Minecraft community • SoftSMP</footer>
+
+<div class="modal" id="vm"><div class="win glass" id="vw">
+  <div class="bar"><h3 class="px" id="vt"></h3><button class="x" id="vx">✕</button></div>
+  <div class="body"><video id="vp" controls playsinline preload="none"></video>
+  <p><b>VC (Voice Chat) nasıl kurulur?</b> Videoyu izleyip adımları sırayla uygula:</p>
+  <ol><li>Videoyu baştan sona izle.</li><li>Gösterilen modu / uygulamayı videodaki gibi kur.</li><li>Sunucuya girince mikrofon iznini ver ve ses ayarlarını kontrol et.</li><li>Takılırsan videoyu durdurup adım adım tekrar dene.</li></ol></div>
+</div></div>
+
+<div class="modal" id="km"><div class="win glass" style="max-width:380px">
+  <div class="bar"><h3 class="px">Kurucular</h3><button class="x" id="kx">✕</button></div>
+  <div class="body fnd"><b>Şevket</b><p>Sunucunun kurucusu</p></div>
+</div></div>
+
+<div id="mwin" class="win glass">
+  <div class="bar"><h3 class="px">🎵 Müzik</h3><button class="x" id="mx">✕</button></div>
+  <div class="body"><video id="mv" playsinline preload="none"></video></div>
+</div>
+<div id="music" class="glass"><button id="mb" title="Müziği aç/kapat">🔊</button><input id="vol" type="range" min="0" max="1" step="0.05" value="0.35"><button id="mvb" title="Videolu hali">🎬</button></div>
+<div id="toast" class="glass">IP kopyalandı! ✅</div>
+<audio id="au" preload="none" loop></audio>
+
+<script>
+const $=id=>document.getElementById(id),MUS='assets/sevkefunk.mp4';
+const au=$('au'),mv=$('mv');au.volume=mv.volume=.35;
+let want=false,mode='a'; // want: müzik istenen durumda mı
+const cur=()=>mode==='v'?mv:au;
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1600)}
+function startMusic(){if(!au.src)au.src=MUS;want=true;cur().play().catch(()=>{});$('mb').textContent='🔊'}
+// Sesi tarayıcı engeller: ilk tıklamada başlar. Müzik normalde sadece SES olarak çalar (video çözülmez = hafif)
+document.addEventListener('click',()=>{if(!want&&!au.dataset.off)startMusic()},{once:true});
+$('mb').onclick=e=>{e.stopPropagation();if(want){want=false;au.dataset.off=1;cur().pause();$('mb').textContent='🔇'}else{au.dataset.off='';startMusic()}};
+$('vol').oninput=e=>au.volume=mv.volume=e.target.value;
+function openMV(){const t=au.currentTime;au.pause();mode='v';mv.src=MUS;
+ mv.onloadedmetadata=()=>{mv.currentTime=t;if(want)mv.play().catch(()=>{})};$('mwin').classList.add('on')}
+function closeMV(){if(mode!=='v')return;const t=mv.currentTime;mv.pause();mv.removeAttribute('src');mv.load();mode='a';au.currentTime=t;if(want)au.play().catch(()=>{});$('mwin').classList.remove('on')}
+$('mvb').onclick=e=>{e.stopPropagation();mode==='v'?closeMV():openMV()};
+$('mx').onclick=closeMV;
+$('cp').onclick=async()=>{const ip='softsmp10.aternos.me';
+ try{await navigator.clipboard.writeText(ip)}catch(e){const t=document.createElement('textarea');t.value=ip;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}
+ toast('IP kopyalandı! ✅')};
+// Kapak videoları: ekrana yaklaşınca yüklenir (en başta hiçbir şey indirilmez)
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){const v=e.target;v.src=v.dataset.src;v.preload='metadata';io.unobserve(v)}}),{rootMargin:'200px'});
+document.querySelectorAll('.thumb video').forEach(v=>io.observe(v));
+// VC video penceresi
+document.querySelectorAll('.vid').forEach(b=>b.onclick=()=>{
+ $('vt').textContent=b.dataset.t;$('vw').classList.toggle('portrait',!!b.dataset.p);
+ const p=$('vp');p.preload='auto';p.src=b.dataset.v;$('vm').classList.add('on');
+ cur().pause();p.play().catch(()=>{})});
+function closeV(){if(!$('vm').classList.contains('on'))return;const p=$('vp');p.pause();$('vm').classList.remove('on');
+ setTimeout(()=>{if(!$('vm').classList.contains('on')){p.removeAttribute('src');p.load()}},250);if(want)cur().play().catch(()=>{})}
+$('vx').onclick=closeV;
+$('vm').onclick=e=>{if(e.target.id==='vm')closeV()};
+$('kb').onclick=()=>$('km').classList.add('on');
+$('kx').onclick=()=>$('km').classList.remove('on');
+$('km').onclick=e=>{if(e.target.id==='km')$('km').classList.remove('on')};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeV();$('km').classList.remove('on')}});
+</script>
+</body>
+</html>
