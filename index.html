@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SoftSMP – Minecraft Sunucusu</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--g:#5cdb5c;--g2:#2e9e3a;--bg:#0f1a12;--card:#17261b;--t:#eaf5ea;--m:#9db8a1}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font-family:Nunito,system-ui,sans-serif;background:radial-gradient(circle at 20% 0,#1d3a24,var(--bg) 60%) fixed;color:var(--t);line-height:1.6}
+.px{font-family:"Press Start 2P",monospace,sans-serif;line-height:1.5}
+nav{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;padding:12px 5%;background:#0f1a12ee;backdrop-filter:blur(8px);border-bottom:2px solid #24402b}
+nav b{color:var(--g);font-size:13px}
+button{font:inherit;cursor:pointer;border:0}
+.btn{background:var(--g2);color:#fff;padding:10px 18px;border-radius:10px;font-weight:800;border-bottom:4px solid #1b6b25;transition:.15s}
+.btn:hover{transform:translateY(-2px);background:#38b045}
+.btn:active{transform:translateY(2px);border-bottom-width:1px}
+.ghost{background:#24402b;border-bottom-color:#16281b}
+.hero{text-align:center;padding:90px 5% 60px}
+.hero h1{font-size:clamp(22px,5vw,44px);color:var(--g);text-shadow:4px 4px #0a120c;margin-bottom:18px}
+.hero p{max-width:560px;margin:0 auto 28px;color:var(--m);font-size:18px}
+.ver{display:inline-block;background:#24402b;color:var(--g);padding:6px 16px;border-radius:20px;margin-bottom:18px;font-weight:700}
+.ip{display:inline-flex;align-items:center;gap:14px;background:var(--card);border:2px dashed var(--g2);border-radius:14px;padding:12px 14px 12px 22px;flex-wrap:wrap;justify-content:center}
+.ip code{font-size:clamp(15px,3.5vw,22px);font-weight:800;color:#fff;letter-spacing:.5px}
+section{padding:60px 5%;max-width:1000px;margin:auto}
+h2{text-align:center;font-size:clamp(15px,3vw,22px);color:var(--g);margin-bottom:10px}
+.sub{text-align:center;color:var(--m);margin-bottom:30px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.card{background:var(--card);border:2px solid #24402b;border-radius:16px;padding:22px;transition:.2s}
+.card:hover{border-color:var(--g2);transform:translateY(-4px)}
+.card h3{margin-bottom:8px}
+.vid{text-align:left;color:var(--t);width:100%}
+.vid .ic{font-size:40px}
+.vid small{color:var(--m);display:block}
+.modal{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.modal.on{display:flex}
+.box{background:var(--card);border:2px solid var(--g2);border-radius:18px;max-width:860px;width:100%;max-height:92vh;overflow:auto;padding:20px}
+.box h3{color:var(--g);font-size:16px;margin-bottom:12px;padding-right:40px}
+.box video{width:100%;border-radius:12px;background:#000;max-height:60vh}
+.box p,.box ol{color:var(--m);margin-top:12px}
+.box ol{padding-left:22px}
+.x{float:right;background:#c0392b;color:#fff;border-radius:8px;width:34px;height:34px;font-size:18px}
+.steps li{margin:4px 0}
+.fnd{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+footer{text-align:center;padding:30px;color:var(--m);font-size:14px}
+#music{position:fixed;right:14px;bottom:14px;z-index:30;background:var(--card);border:2px solid var(--g2);border-radius:14px;padding:8px 12px;display:flex;gap:10px;align-items:center}
+#music button{background:none;font-size:22px}
+#music input{width:80px;accent-color:var(--g)}
+#toast{position:fixed;left:50%;bottom:80px;transform:translate(-50%,30px);background:var(--g2);color:#fff;padding:10px 20px;border-radius:30px;font-weight:800;opacity:0;transition:.3s;z-index:60;pointer-events:none}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<nav><b class="px">⛏ SOFTSMP</b><div><button class="btn ghost" id="kb">Kurucular</button></div></nav>
+
+<header class="hero">
+  <h1 class="px">SoftSMP'ye Katıl!</h1>
+  <p>Arkadaşlarınla birlikte hayatta kal, inşa et, keşfet. Sunucumuz herkese açık, hemen gel!</p>
+  <div class="ver">Java Edition • Sürüm <b>1.21.8</b></div>
+  <div class="ip"><span>🌍</span><code id="ipt">softsmp10.aternos.me</code><button class="btn" id="cp">IP'yi Kopyala</button></div>
+</header>
+
+<section id="vc">
+  <h2 class="px">VC Nasıl Kurulur?</h2>
+  <p class="sub">Sunucuda sesli konuşmak için videoları izle, adım adım öğren 👇</p>
+  <div class="grid">
+    <div class="card"><button class="vid" data-v="assets/videomobil.mp4" data-t="📱 Mobil'de VC Kurulumu"><div class="ic">📱</div><h3>Mobil</h3><small>Telefondan oynayanlar için – izlemek için tıkla</small></button></div>
+    <div class="card"><button class="vid" data-v="assets/videopc.mp4" data-t="💻 PC'de VC Kurulumu"><div class="ic">💻</div><h3>PC</h3><small>Bilgisayardan oynayanlar için – izlemek için tıkla</small></button></div>
+  </div>
+</section>
+
+<section>
+  <h2 class="px">Nasıl Girerim?</h2>
+  <p class="sub">Sadece 3 adım</p>
+  <div class="grid">
+    <div class="card"><h3>1. IP'yi kopyala</h3><p>Yukarıdaki butona basarak <b>softsmp10.aternos.me</b> adresini kopyala.</p></div>
+    <div class="card"><h3>2. Minecraft'ı aç</h3><p>Sürüm <b>1.21.8</b> ile Çok Oyunculu → Sunucu Ekle kısmına IP'yi yapıştır.</p></div>
+    <div class="card"><h3>3. Bağlan!</h3><p>Sunucu kapalıysa biraz bekle, açılınca gir ve eğlen.</p></div>
+  </div>
+</section>
+
+<footer>Made with ❤ for the Minecraft community • SoftSMP</footer>
+
+<div class="modal" id="vm"><div class="box"><button class="x" id="vx">✕</button>
+  <h3 class="px" id="vt"></h3>
+  <video id="vp" controls playsinline></video>
+  <p><b>VC (Voice Chat) nasıl kurulur?</b> Videoyu izleyip adımları sırayla uygula:</p>
+  <ol class="steps">
+    <li>Videoyu baştan sona izle.</li>
+    <li>Gösterilen modu / uygulamayı videodaki gibi kur.</li>
+    <li>Sunucuya girince mikrofon iznini ver ve ses ayarlarını kontrol et.</li>
+    <li>Takılırsan videoyu durdurup adım adım tekrar dene.</li>
+  </ol></div></div>
+
+<div class="modal" id="km"><div class="box"><button class="x" id="kx">✕</button>
+  <h3 class="px">Kurucular</h3>
+  <div class="fnd"><div><b style="font-size:22px">Şevket</b><br><span style="color:var(--m)">Sunucunun kurucusu</span></div></div></div></div>
+
+<div id="music"><button id="mb" title="Müzik">🔊</button><input id="vol" type="range" min="0" max="1" step="0.05" value="0.35"></div>
+<audio id="bg" src="assets/sevkefunk.mp4" loop></audio>
+<div id="toast">IP kopyalandı! ✅</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const bg=$('bg');bg.volume=.35;let on=false;
+function play(){bg.play().then(()=>{on=true;$('mb').textContent='🔊'}).catch(()=>{})}
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1800)}
+// tarayıcılar otomatik sesi engeller: ilk tıklamada müzik başlar
+document.addEventListener('click',()=>{if(!on&&!bg.dataset.off)play()},{once:true});
+$('mb').onclick=e=>{e.stopPropagation();if(bg.paused){bg.dataset.off='';play()}else{bg.pause();bg.dataset.off=1;on=false;$('mb').textContent='🔇'}};
+$('vol').oninput=e=>bg.volume=e.target.value;
+$('cp').onclick=async()=>{const ip='softsmp10.aternos.me';
+ try{await navigator.clipboard.writeText(ip)}catch(e){const t=document.createElement('textarea');t.value=ip;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}
+ toast('IP kopyalandı! ✅')};
+document.querySelectorAll('.vid').forEach(b=>b.onclick=()=>{
+ $('vt').textContent=b.dataset.t;$('vp').src=b.dataset.v;$('vm').classList.add('on');
+ if(!bg.paused)bg.pause();$('vp').play().catch(()=>{})});
+function closeV(){$('vp').pause();$('vp').removeAttribute('src');$('vm').classList.remove('on');if(on&&!bg.dataset.off)bg.play()}
+$('vx').onclick=closeV;
+$('vm').onclick=e=>{if(e.target.id==='vm')closeV()};
+$('kb').onclick=()=>$('km').classList.add('on');
+$('kx').onclick=()=>$('km').classList.remove('on');
+$('km').onclick=e=>{if(e.target.id==='km')$('km').classList.remove('on')};
+</script>
+</body>
+</html>
